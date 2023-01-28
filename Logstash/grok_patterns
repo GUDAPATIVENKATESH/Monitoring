@@ -1,0 +1,22 @@
+#log-1
+Jun 14 15:16:01 combo sshd(pam_unix)[19939]: authentication failure; logname= uid=0 euid=0 tty=NODEVssh ruser= rhost=218.188.2.4
+log_date = Jun 14 15:16:01
+process_name = sshd
+pid=19939
+log_message= autentication failure
+remote_host = 218.188.2.4
+# one solution
+(?<log_date>%{WORD}%{SPACE}%{MONTHDAY}%{SPACE}%{TIME})%{SPACE}%{WORD}%{SPACE}%{WORD:process_name}\(%{WORD}\)\[%{NUMBER:pid}\]:%{SPACE}(?<log_message>(\b\w+\b%{SPACE})+);%{GREEDYDATA}%{IPV4:remote_host}
+# better solution
+%{SYSLOGTIMESTAMP:log_date}%{SPACE}%{WORD}%{SPACE}%{WORD:process_name}\(%{WORD}\)\[%{NUMBER:pid}\]:%{SPACE}(?<log_message>(\b\w+\b%{SPACE})+);%{GREEDYDATA}%{IPV4:remote_host}
+
+
+#log-2
+17/06/09 20:10:40 INFO executor.CoarseGrainedExecutorBackend: Registered signal handlers for [TERM, HUP, INT]
+log_date = 17/06/09 20:10:40
+level = info
+class = executor.CoarseGrainedExecutorBackend
+message = Registered signal handlers for [TERM, HUP, INT]
+#Grok Pattern
+(?<log_date>%{DATE_EU}%{SPACE}%{TIME})%{SPACE}%{WORD:level}%{SPACE}%{GREEDYDATA:class}:%{SPACE}%{GREEDYDATA:message}
+%{DATESTAMP:log_date}%{SPACE}%{WORD:level}%{SPACE}%{GREEDYDATA:class}:%{SPACE}%{GREEDYDATA:message}
